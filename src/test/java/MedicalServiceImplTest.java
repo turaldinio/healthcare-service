@@ -34,6 +34,9 @@ public class MedicalServiceImplTest {
 
     }
 
+    /**
+     * Проверка отправки уведомления о повышенной температуре
+     */
     @Test
     public void sendingNotificationTemperature() {
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
@@ -59,8 +62,23 @@ public class MedicalServiceImplTest {
 
     }
 
+    /**
+     * Проверка кол-ва вызовов метода
+     */
     @Test
-    public void invokeCount() {
+    public void invokeCountTemperature() {
+        medicalService.checkTemperature(patientInfo.getId(), new BigDecimal("36"));
+        Mockito.verify(sendAlertService, Mockito.only()).send(Mockito.anyString());
+    }
+
+    /**
+     * Проверка кол-ва вызовов метода
+     */
+    @Test
+    public void invokeCountBloodPleasure() {
+        medicalService.checkBloodPressure(patientInfo.getId(), new BloodPressure(150, 120));
+
+        Mockito.verify(sendAlertService, Mockito.only()).send(Mockito.anyString());
 
     }
 
