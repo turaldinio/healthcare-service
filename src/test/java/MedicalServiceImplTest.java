@@ -2,7 +2,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import ru.netology.patient.entity.BloodPressure;
 import ru.netology.patient.entity.HealthInfo;
@@ -25,8 +24,8 @@ public class MedicalServiceImplTest {
                 new HealthInfo(new BigDecimal("41"), new BloodPressure(120, 80)));
 
         PatientInfoRepository patientInfoRepository = Mockito.mock(PatientInfoRepository.class);
-        Mockito.when(patientInfoRepository.getById(Mockito.anyString())).thenReturn(patientInfo);
-        Mockito.when(patientInfoRepository.add(Mockito.any(PatientInfo.class))).thenReturn(patientInfo.toString());
+        Mockito.when(patientInfoRepository.getById(patientInfo.getId())).thenReturn(patientInfo);
+        Mockito.when(patientInfoRepository.add(Mockito.any(PatientInfo.class))).thenReturn(patientInfo.getId());
 
         sendAlertService = Mockito.mock(SendAlertService.class);
 
@@ -35,40 +34,6 @@ public class MedicalServiceImplTest {
 
     }
 
-    /**
-     * проверям что при норм давлении, метод оповещения срабатывает 0 раз
-     * при повышен давлении сраб 1 раз
-     */
-    @Test
-    void checkBloodPressure() {
-
-        medicalService.checkBloodPressure(patientInfo.getId(), new BloodPressure(60, 120));
-        Mockito.verify(sendAlertService, Mockito.only()).send(Mockito.anyString());
-
-
-        medicalService.checkBloodPressure(patientInfo.getId(), new BloodPressure(120, 80));
-        Mockito.verify(sendAlertService, Mockito.never());
-
-    }
-
-    /**
-     * проверям что при норм темп, метод оповещения срабатывает 0 раз
-     * при повышен сраб 1 раз
-     */
-    @Test
-    void checkTemperature() {
-        medicalService.checkTemperature(patientInfo.getId(), new BigDecimal("36.6"));
-        Mockito.verify(sendAlertService, Mockito.only()).send(Mockito.anyString());
-
-        medicalService.checkTemperature(patientInfo.getId(), new BigDecimal("43"));
-        Mockito.verify(sendAlertService, Mockito.never());
-
-    }
-
-
-    /**
-     * Проверка отправки уведомления о повышенной темпер
-     */
     @Test
     public void sendingNotificationTemperature() {
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
@@ -91,6 +56,11 @@ public class MedicalServiceImplTest {
         Mockito.verify(sendAlertService).send(argumentCaptor.capture());
 
         Assertions.assertNotNull(argumentCaptor.getValue());
+
+    }
+
+    @Test
+    public void invokeCount() {
 
     }
 
